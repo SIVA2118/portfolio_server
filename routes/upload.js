@@ -48,7 +48,7 @@ router.post('/', protect, upload.single('file'), (req, res) => {
         return res.status(400).json({ success: false, error: 'No file uploaded' });
     }
     // We want to return the full URL if possible, or relative path
-    const fileUrl = `http://localhost:5000/uploads/${req.file.filename}`;
+    const fileUrl = `https://portfolio-server-32tn.onrender.com/uploads/${req.file.filename}`;
     res.status(200).json({
         success: true,
         data: fileUrl

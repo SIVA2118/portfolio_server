@@ -1,32 +1,31 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
+const path = require('path');
 const connectDB = require('./config/db');
 
 // Load env vars
 dotenv.config();
 
-// Connect to database
+// Connect DB
 connectDB();
 
 const app = express();
 
-const path = require('path');
-
 // Body parser
 app.use(express.json());
 
-// Enable CORS
+// CORS
 app.use(cors({
-    origin: '*',
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization']
+  origin: '*',
+  methods: ['GET','POST','PUT','DELETE','OPTIONS'],
+  allowedHeaders: ['Content-Type','Authorization']
 }));
 
-// Set static folder for uploads
+// Static uploads
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Mount routes
+// Routes
 app.use('/api/contact', require('./routes/contact'));
 app.use('/api/admin', require('./routes/admin'));
 app.use('/api/projects', require('./routes/projects'));
@@ -37,12 +36,23 @@ app.use('/api/services', require('./routes/services'));
 app.use('/api/youtube', require('./routes/youtube'));
 app.use('/api/upload', require('./routes/upload'));
 
-app.get('/', (req, res) => {
-    res.send('Portfolio API is running...');
+// 🔥 Health check (IMPORTANT)
+app.get('/health', (req, res) => {
+  res.status(200).json({
+    status: 'OK',
+    uptime: process.uptime(),
+    timestamp: new Date()
+  });
 });
 
+// Root
+app.get('/', (req, res) => {
+  res.send('Portfolio API is running...');
+});
+
+// Port
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
-    console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
